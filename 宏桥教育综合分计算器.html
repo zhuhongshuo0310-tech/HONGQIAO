@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>宏桥教育·山东表导演综合分计算器 | 加权公式</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: system-ui, 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f0e7 0%, #e8dccc 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+        }
+
+        /* 卡片容器 典雅风格 */
+        .calculator-card {
+            max-width: 580px;
+            width: 100%;
+            background: #fffef7;
+            backdrop-filter: blur(2px);
+            border-radius: 48px;
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            transition: all 0.2s ease;
+            border: 1px solid rgba(230, 210, 170, 0.6);
+        }
+
+        /* 头部 - 宏桥教育主题 */
+        .calc-header {
+            background: #8b2c1d;
+            background-image: linear-gradient(115deg, #7a2618, #a03f2c);
+            color: #ffefcf;
+            padding: 28px 24px;
+            text-align: center;
+            border-bottom: 3px solid #e9bc6d;
+        }
+
+        .calc-header h1 {
+            margin: 0;
+            font-size: 1.9rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+
+        .calc-header .subhead {
+            font-size: 1.05rem;
+            margin-top: 8px;
+            opacity: 0.92;
+            font-weight: 500;
+        }
+
+        .calc-header .subhead strong {
+            color: #ffdd99;
+            font-weight: 700;
+        }
+
+        .formula-badge {
+            background: #2c1e16;
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-family: monospace;
+            margin-top: 14px;
+            letter-spacing: 0.4px;
+            background-color: #4e2a1f;
+            color: #f7e5c2;
+            border: 1px solid #dfb87a;
+        }
+
+        /* 主体 */
+        .calc-body {
+            padding: 28px 28px 20px;
+        }
+
+        /* 输入组 */
+        .input-group {
+            margin-bottom: 28px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-label {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 8px;
+            color: #4a2a1e;
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+        }
+
+        .input-label span:first-child {
+            background: #f6efe3;
+            padding: 4px 14px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+        }
+
+        .range-hint {
+            font-size: 0.75rem;
+            color: #8b6b4b;
+            font-weight: normal;
+        }
+
+        .input-field {
+            display: flex;
+            align-items: center;
+            background: #fefaf2;
+            border: 1.5px solid #e7dbbc;
+            border-radius: 44px;
+            transition: all 0.2s;
+            padding: 4px 18px;
+        }
+
+        .input-field:focus-within {
+            border-color: #b56a3e;
+            box-shadow: 0 0 0 3px rgba(181, 106, 62, 0.2);
+            background: #ffffff;
+        }
+
+        .input-field input {
+            flex: 1;
+            padding: 14px 10px 14px 5px;
+            font-size: 1.2rem;
+            font-weight: 500;
+            border: none;
+            background: transparent;
+            outline: none;
+            color: #2c1b12;
+        }
+
+        .input-field input[type="number"] {
+            -moz-appearance: textfield;
+        }
+
+        .input-field input[type="number"]::-webkit-inner-spin-button,
+        .input-field input[type="number"]::-webkit-outer-spin-button {
+            opacity: 0.5;
+        }
+
+        .input-suffix {
+            font-weight: 500;
+            color: #9b7b5c;
+            padding-left: 6px;
+            font-size: 1rem;
+        }
+
+        /* 说明卡片 山东省表导演特色 */
+        .info-note {
+            background: #faf2e4;
+            border-radius: 28px;
+            padding: 12px 18px;
+            margin: 15px 0 20px;
+            font-size: 0.8rem;
+            color: #5d3c28;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            border-left: 5px solid #c2824b;
+        }
+
+        .info-note .icon {
+            font-size: 1.3rem;
+        }
+
+        /* 按钮 */
+        .calc-actions {
+            display: flex;
+            gap: 14px;
+            margin: 25px 0 20px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px 5px;
+            font-weight: 600;
+            font-size: 1rem;
+            border: none;
+            border-radius: 44px;
+            cursor: pointer;
+            transition: 0.2s;
+            background: #f0e7da;
+            color: #4f2e1f;
+        }
+
+        .btn-primary {
+            background: #8b3a28;
+            color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary:hover {
+            background: #702f1f;
+            transform: scale(0.98);
+        }
+
+        .btn-secondary {
+            background: #e9ddce;
+            border: 1px solid #cfbc9f;
+        }
+
+        .btn-secondary:hover {
+            background: #dfceb8;
+        }
+
+        /* 结果区域 */
+        .result-area {
+            background: #f9f2e6;
+            border-radius: 36px;
+            padding: 20px 24px;
+            margin-top: 15px;
+            text-align: center;
+            border: 1px solid #eedfcb;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.02), 0 4px 8px rgba(0,0,0,0.05);
+        }
+
+        .result-label {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 700;
+            color: #9b6241;
+        }
+
+        .result-value {
+            font-size: 3.2rem;
+            font-weight: 800;
+            color: #582d1b;
+            line-height: 1.2;
+            margin: 8px 0;
+            word-break: break-word;
+        }
+
+        .result-detail {
+            font-size: 0.8rem;
+            color: #7f5a40;
+            border-top: 1px dashed #e2cfb5;
+            padding-top: 12px;
+            margin-top: 6px;
+        }
+
+        .error-message {
+            color: #c2410c;
+            background: #fff4ed;
+            border-radius: 28px;
+            padding: 8px 15px;
+            font-size: 0.8rem;
+            display: inline-block;
+        }
+
+        footer {
+            font-size: 0.7rem;
+            text-align: center;
+            color: #9c7b5e;
+            padding: 18px 20px 22px;
+            border-top: 1px solid #ede1cf;
+            margin-top: 8px;
+        }
+
+        @media (max-width: 480px) {
+            .calc-body {
+                padding: 20px;
+            }
+            .result-value {
+                font-size: 2.5rem;
+            }
+            .calc-header h1 {
+                font-size: 1.5rem;
+            }
+            .btn {
+                padding: 12px 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="calculator-card">
+    <div class="calc-header">
+        <h1> 宏桥教育 · 山东省表（导）演类</h1>
+        <div class="subhead">综合成绩分数计算器 · <strong>模拟参考</strong></div>
+        <div class="formula-badge">
+            📐 综合分 = 高考文化分 × 50% + 统考专业分 × (750/300) × 50%
+        </div>
+    </div>
+    <div class="calc-body">
+        <!-- 高考文化分 (山东夏季高考满分750) -->
+        <div class="input-group">
+            <div class="input-label">
+                <span>📚 高考分数</span>
+                <span class="range-hint">高考分数满分750 分</span>
+            </div>
+            <div class="input-field">
+                <input type="number" id="gaokaoScore" placeholder="例如 0" value="0" step="1" min="0" max="750">
+                <span class="input-suffix">分</span>
+            </div>
+        </div>
+
+        <!-- 山东省表导演统考专业分（满分通常300分） -->
+        <div class="input-group">
+            <div class="input-label">
+                <span>🎬 统考分数</span>
+                <span class="range-hint">统考满分300分</span>
+            </div>
+            <div class="input-field">
+                <input type="number" id="tongkaoScore" placeholder="例如 0" value="0" step="1" min="0" max="300">
+                <span class="input-suffix">分</span>
+            </div>
+        </div>
+
+        <!-- 说明卡片：重点提示统考折算规则 -->
+        <div class="info-note">
+            <span class="icon">🎭</span>
+            <span><strong>山东省表(导)演类折算依据</strong>：表（导）演类综合成绩=文化成绩×50%+专业成绩×750/300×50%。</span>
+        </div>
+
+        <!-- 操作按钮组 -->
+        <div class="calc-actions">
+            <button class="btn btn-primary" id="calcBtn">✨ 计算综合成绩</button>
+            <button class="btn btn-secondary" id="resetBtn">🔄 重置分数</button>
+        </div>
+
+        <!-- 结果显示区域 -->
+        <div class="result-area" id="resultArea">
+            <div class="result-label">🏆 表(导)演类综合分</div>
+            <div class="result-value" id="finalScoreDisplay">—</div>
+            <div class="result-detail" id="detailExplain">
+                请输入高考文化分及统考专业分，点击计算或自动更新。
+            </div>
+        </div>
+    </div>
+    <footer>
+        💡 公式依据：表（导）演类综合成绩=文化成绩×50%+专业成绩×750/300×50%。本工具仅供山东省表导演类考生参考，实际录取以山东省教育招生考试院政策为准。<br>
+        宏桥教育 · 专注艺考26年
+    </footer>
+</div>
+
+<script>
+    (function() {
+        // DOM 元素绑定
+        const gaokaoInput = document.getElementById('gaokaoScore');
+        const tongkaoInput = document.getElementById('tongkaoScore');
+        const calcButton = document.getElementById('calcBtn');
+        const resetButton = document.getElementById('resetBtn');
+        const finalScoreSpan = document.getElementById('finalScoreDisplay');
+        const detailExplainDiv = document.getElementById('detailExplain');
+
+        // 分数限制常量
+        const GAOKAO_MAX = 750;
+        const TONGKAO_MAX_ORIGIN = 300;
+        const FULL_SCORE_STANDARD = 750;   // 换算目标满分
+
+        // 安全获取有效数值（自动限制边界）
+        function getValidNumber(element, defaultValue = 0, minVal = 0, maxVal = null) {
+            let rawValue = element.value.trim();
+            if (rawValue === "") return defaultValue;
+            let num = Number(rawValue);
+            if (isNaN(num)) return defaultValue;
+            if (num < minVal) num = minVal;
+            if (maxVal !== null && num > maxVal) num = maxVal;
+            // 保留两位小数，但通常整数场景居多，保留处理精度
+            return parseFloat(num.toFixed(2));
+        }
+
+        // 核心计算：综合分 = 高考分*0.5 + (统考分 * 750/300) * 0.5
+        function computeComprehensiveScore(gaokao, tongkaoRaw) {
+            if (gaokao < 0 || tongkaoRaw < 0) return null;
+            // 边界裁剪 (保险)
+            let safeGaokao = Math.min(GAOKAO_MAX, Math.max(0, gaokao));
+            let safeTongkao = Math.min(TONGKAO_MAX_ORIGIN, Math.max(0, tongkaoRaw));
+            
+            const conversionFactor = FULL_SCORE_STANDARD / TONGKAO_MAX_ORIGIN; // 750/300 = 2.5
+            const convertedTongkao = safeTongkao * conversionFactor;
+            // 综合分公式 (各占50%)
+            let comprehensive = (safeGaokao * 0.5) + (convertedTongkao * 0.5);
+            comprehensive = Math.round(comprehensive * 100) / 100;
+            return comprehensive;
+        }
+
+        // 生成详细计算说明 (含步骤)
+        function getDetailExplanation(gaokao, tongkaoRaw, finalScore) {
+            if (finalScore === null || isNaN(finalScore)) {
+                return "⚠️ 分数无效，请确保高考分数 0-750，统考分数 0-300。";
+            }
+            const conversionFactor = 750 / 300;  // =2.5
+            const convertedTongkao = tongkaoRaw * conversionFactor;
+            const gaokaoWeighted = (gaokao * 0.5).toFixed(2);
+            const tongkaoWeighted = (convertedTongkao * 0.5).toFixed(2);
+            return `📊 计算细则：<br>① 高考文化分 ${gaokao} × 50% = ${gaokaoWeighted}<br>② 统考专业分 ${tongkaoRaw} × (750/300) = ${convertedTongkao.toFixed(2)}，再乘50% = ${tongkaoWeighted}<br>③ 综合分 = ${gaokaoWeighted} + ${tongkaoWeighted} = <strong>${finalScore.toFixed(2)}</strong> 分`;
+        }
+
+        // 更新UI：根据输入框当前数值计算并显示结果
+        function updateResult() {
+            // 获取数值并自动裁剪上下界
+            let rawGaokao = getValidNumber(gaokaoInput, 0, 0, GAOKAO_MAX);
+            let rawTongkao = getValidNumber(tongkaoInput, 0, 0, TONGKAO_MAX_ORIGIN);
+            
+            // 自动修正输入框显示值（如果超出范围或格式有误，同步至合法值）
+            if (rawGaokao !== Number(gaokaoInput.value)) {
+                gaokaoInput.value = rawGaokao;
+            }
+            if (rawTongkao !== Number(tongkaoInput.value)) {
+                tongkaoInput.value = rawTongkao;
+            }
+            
+            // 执行计算
+            const comprehensive = computeComprehensiveScore(rawGaokao, rawTongkao);
+            
+            if (comprehensive !== null && !isNaN(comprehensive)) {
+                finalScoreSpan.innerText = comprehensive.toFixed(2);
+                const detailHtml = getDetailExplanation(rawGaokao, rawTongkao, comprehensive);
+                detailExplainDiv.innerHTML = detailHtml;
+                // 简单动效增强反馈
+                finalScoreSpan.style.transform = "scale(1.02)";
+                setTimeout(() => { if(finalScoreSpan) finalScoreSpan.style.transform = ""; }, 150);
+            } else {
+                finalScoreSpan.innerText = "❌ 无效";
+                detailExplainDiv.innerHTML = "输入错误：高考文化分应在0-750之间，统考专业分应在0-300之间。请重新填写。";
+            }
+        }
+
+        // 重置所有输入为推荐参考值（典型山东表演类参考分数）
+        function resetToDefault() {
+            gaokaoInput.value = "480";
+            tongkaoInput.value = "238";
+            updateResult();
+            // 给结果区域添加视觉反馈
+            const resultArea = document.getElementById('resultArea');
+            if (resultArea) {
+                resultArea.style.transition = "background 0.2s";
+                resultArea.style.background = "#fff5ea";
+                setTimeout(() => {
+                    if(resultArea) resultArea.style.background = "";
+                }, 300);
+            }
+        }
+
+        // 防抖计时器，优化input实时计算体验
+        let debounceTimer;
+        function handleInputChange() {
+            if (debounceTimer) clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                updateResult();
+            }, 50);
+        }
+
+        // 绑定所有交互事件
+        function bindEvents() {
+            gaokaoInput.addEventListener('input', handleInputChange);
+            gaokaoInput.addEventListener('change', function() {
+                let clamped = Math.min(GAOKAO_MAX, Math.max(0, Number(this.value) || 0));
+                if (Number(this.value) !== clamped) this.value = clamped;
+                updateResult();
+            });
+            tongkaoInput.addEventListener('input', handleInputChange);
+            tongkaoInput.addEventListener('change', function() {
+                let clamped = Math.min(TONGKAO_MAX_ORIGIN, Math.max(0, Number(this.value) || 0));
+                if (Number(this.value) !== clamped) this.value = clamped;
+                updateResult();
+            });
+            
+            calcButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                // 强制执行一次边界同步
+                let gVal = getValidNumber(gaokaoInput, 0, 0, GAOKAO_MAX);
+                let tVal = getValidNumber(tongkaoInput, 0, 0, TONGKAO_MAX_ORIGIN);
+                gaokaoInput.value = gVal;
+                tongkaoInput.value = tVal;
+                updateResult();
+            });
+            
+            resetButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                resetToDefault();
+            });
+        }
+
+        // 初始化页面，设定演示值并计算
+        function init() {
+            bindEvents();
+            // 设置起始默认值（符合山东省表导演考生常见区间）
+            gaokaoInput.value = "480";
+            tongkaoInput.value = "238";
+            updateResult();
+        }
+        
+        init();
+    })();
+</script>
+</body>
